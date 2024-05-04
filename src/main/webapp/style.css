@@ -17,7 +17,6 @@ header {
 }
 
 #operation {
-    border: 2px solid red;
     display: flex;
     height: 500px;
     margin: 5%;
@@ -29,7 +28,6 @@ header {
     justify-content: space-evenly;
     align-items: center;
     width: 30%;
-    border: 2px solid red;
 }
 
 #operation ul li {
@@ -45,13 +43,13 @@ header {
 }
 
 #operation ul li:hover {
-    border: 5px solid #9b00afd1;
+    border: 5px solid #5ae48a;
 }
 
 #operation iframe {
     display: block;
     width: 70%;
-    border: 2px solid red;
+    border-radius: 10px;
 }
 
 footer {

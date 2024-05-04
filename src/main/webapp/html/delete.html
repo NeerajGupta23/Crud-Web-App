@@ -4,23 +4,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete</title>
+    <title>Create</title>
+    <link rel="stylesheet" href="../css/form.css">
+    <style>
+        body {
+            background-image: url("../media/try6.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #delete {
+            font-size: 20px;
+            padding: 10px;
+            padding-right: 12px;
+            border-radius: 10px;
+            background-color: #ff8d8d;
+        }
+
+        #delete:hover {
+            background-color: #ff6b6b;
+        }
+
+        #delete:focus {
+            border: 3px solid rgba(194, 0, 0, 0.945);
+            border-top: 4px solid rgba(194, 0, 0, 0.945);
+            border-left: 4px solid rgba(194, 0, 0, 0.945);
+        }
+    </style>
 </head>
 
 <body>
-    <header>Delete Record</header>
-    <form action="./delte.perform" method="post">
+    <header>
+        <h3>Delete Record</h3>
+    </header>
+    <form action="./delete.perform" method="post">
         <table>
-            <tr>
-                <th><label for="id">Id : </label></th>
-                <td><input type="number" name="id" id="id" placeholder="34"></td>
-            </tr>
-            <tr>
-                <th></th>
-                <td><input type="submit" value="Delete"></td>
-            </tr>
+            <div>
+                <tr>
+                    <th><label for="name">Id : </label></th>
+                    <td><input type="number" name="id" id="name" placeholder="234"></td>
+                </tr>
+            </div>
+
+            <div>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+            </div>
+
+            <div>
+                <tr>
+                    <th></th>
+                    <td></td>
+                </tr>
+            </div>
+            <div>
+                <tr>
+                    <th class="container"></th>
+                    <td class="container"><input id="delete" type="submit" value="Delete"></td>
+                </tr>
+            </div>
         </table>
     </form>
+
+    <h4></h4>
+    <script>
+    </script>
 </body>
 
 </html>
