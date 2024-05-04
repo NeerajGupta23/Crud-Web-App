@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create</title>
+    <link rel="stylesheet" href="../css/form.css">
+</head>
+
+<body>
+    <header>
+        <h3>Create New Record</h3>
+    </header>
+    <form action="./create.perform" method="post">
+        <table>
+            <div>
+                <tr>
+                    <th><label for="name">Name : </label></th>
+                    <td><input type="text" name="name" id="name" placeholder="Neeraj Gupta"></td>
+                </tr>
+            </div>
+
+            <div>
+                <tr>
+                    <th><label for="age">Age : </label></th>
+                    <td><input type="number" name="age" id="age" placeholder="21"></td>
+                </tr>
+            </div>
+
+            <div>
+                <tr>
+                    <th><label for="address">Address : </label></th>
+                    <td><input type="text" name="address" id="address" placeholder="Los Angeles "></td>
+                </tr>
+            </div>
+            <div>
+                <tr>
+                    <th class="insert_container"></th>
+                    <td class="insert_container"><input id="insert" type="submit" value="Insert"></td>
+                </tr>
+            </div>
+        </table>
+    </form>
+</body>
+
+</html>

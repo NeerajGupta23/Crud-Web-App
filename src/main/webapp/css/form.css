@@ -1,0 +1,57 @@
+body {
+    background-color: rgb(187, 255, 175);
+    color: rgb(88, 0, 0);
+    text-align: center;
+}
+
+header h3 {
+    text-align: center;
+    font-size: 35px;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    height: 350px;
+}
+
+table tr th {
+    width: 40%;
+    padding-left: 20%;
+    font-size: 30px;
+}
+
+table tr td {
+    width: 60%;
+    padding-right: 35%;
+}
+
+#insert {
+    font-size: 20px;
+    padding: 5px;
+    padding-right: 7px;
+    border-radius: 10px;
+    background-color: #79ff61;
+}
+
+#insert:hover {
+    background-color: #4cff2c;
+}
+
+#insert:focus {
+    border: 3px solid green;
+    border-top: 4px solid green;
+    border-left: 4px solid green;
+}
+
+.insert_container {
+    height: 70px;
+    padding-right: 60%;
+}
+
+#name, #age, #address {
+    margin: 0%;
+    font-size: 25px;
+    background-color: rgb(116, 255, 241);
+}
