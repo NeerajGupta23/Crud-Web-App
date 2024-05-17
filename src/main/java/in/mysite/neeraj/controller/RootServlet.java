@@ -17,6 +17,7 @@ import in.mysite.neeraj.vo.StudentVO;
 @WebServlet(urlPatterns = { "*.perform" }, loadOnStartup = 1)
 public class RootServlet extends HttpServlet implements IStudentController {
 	private static final long serialVersionUID = 1L;
+	private String deleteId = null;
 
 	public RootServlet() {
 		super();
@@ -33,6 +34,7 @@ public class RootServlet extends HttpServlet implements IStudentController {
 		StringBuffer requestURL = request.getRequestURL();
 		String type = requestURL.substring(38);
 		StudentDTO studentDTO = null;
+		Boolean flag = true;
 
 		switch (type.replaceFirst(".perform", "")) {
 
@@ -47,14 +49,22 @@ public class RootServlet extends HttpServlet implements IStudentController {
 		case "read":
 			studentDTO = readStudent(request, response);
 			if (studentDTO != null) {
-				presentInUI(request, response, studentDTO);
+				if (studentDTO.getName() == null && studentDTO.getAge() == null && studentDTO.getAddress() == null) {
+					idNotExist(request, response, studentDTO.getId());
+				} else {
+					presentInUI(request, response, studentDTO);
+				}
 			}
 			break;
 
 		case "update":
 			studentDTO = readStudent(request, response);
 			if (studentDTO != null) {
-				presentInForm(request, response, studentDTO);
+				if (studentDTO.getName() == null && studentDTO.getAge() == null && studentDTO.getAddress() == null) {
+					idNotExist(request, response, studentDTO.getId());
+				} else {
+					presentInForm(request, response, studentDTO);
+				}
 			}
 			break;
 
@@ -63,6 +73,32 @@ public class RootServlet extends HttpServlet implements IStudentController {
 			break;
 		}
 
+	}
+
+	private void idNotExist(HttpServletRequest request, HttpServletResponse response, int id) throws IOException {
+		PrintWriter out = response.getWriter();
+		out.println("<body>");
+		out.println("<style>");
+		out.println("body { " + "	   background-color: rgb(252, 255, 96);" + "    color: rgb(88, 0, 0);"
+				+ "    border: 5px solid rgb(255, 88, 116);" + "    border-radius: 10px;" + "    text-align: center;"
+				+ "	   padding-top: 5%;" + "    font-size: 35px; " + "	   margin: 0%;" + " }");
+
+		out.println("        #back {\r\n" + "            font-size: 20px;\r\n" + "            padding: 10px;\r\n"
+				+ "            padding-right: 12px;\r\n" + "            border-radius: 10px;\r\n"
+				+ "            background-color: #a7d4ff;\r\n" + "            text-decoration: none;" + "        }\r\n"
+				+ "\r\n" + "        #back:hover {\r\n" + "            background-color: #67b6ff;\r\n" + "        }\r\n"
+				+ "\r\n" + "        #back:focus {\r\n"
+				+ " color: rgb(88, 0, 0);           border: 3px solid #166cff;\r\n"
+				+ "            border-top: 4px solid #166cff;\r\n" + "            border-left: 4px solid #166cff;\r\n"
+				+ "        }");
+		out.println("</style>");
+
+		out.println("<h3>No Data is Associated with id :: " + id + "</h3>");
+		out.println("<br><br><br>");
+		out.println("<a id='back' href='" + request.getHeader("referer") + "'>Back</a>");
+		out.println("</body>");
+		out.flush();
+		out.close();
 	}
 
 	private Boolean updateStudent(HttpServletRequest request, HttpServletResponse response) {
@@ -191,9 +227,19 @@ public class RootServlet extends HttpServlet implements IStudentController {
 
 	public boolean deleteStudent(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
+		deleteId = id;
+
+		if (id.equals("")) {
+			try {
+				response.sendRedirect(request.getHeader("referer"));
+			} catch (IOException e) {
+				System.out.println("There is no value given for id...");
+				e.printStackTrace();
+			}
+		}
 
 		StudentDTO studentDTO = new StudentDTO();
-		Boolean flag = false;
+		Boolean flag = true;
 
 		try {
 			studentDTO.setId(Integer.parseInt(id));
@@ -207,12 +253,22 @@ public class RootServlet extends HttpServlet implements IStudentController {
 			flag = studentServiceObject.deleteStudent(studentDTO);
 		}
 
-		try {
-			response.sendRedirect(request.getHeader("referer"));
-		} catch (IOException e) {
-			System.out.println("Problem At Delete module");
-			e.printStackTrace();
+		if (!flag) {
+			try {
+				idNotExist(request, response, Integer.parseInt(deleteId));
+			} catch (NumberFormatException | IOException e) {
+				System.out.println("Deletion Page not exist Problem");
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				response.sendRedirect(request.getHeader("referer"));
+			} catch (IOException e) {
+				System.out.println("Problem At Delete module");
+				e.printStackTrace();
+			}
 		}
+
 		return flag;
 	}
 
