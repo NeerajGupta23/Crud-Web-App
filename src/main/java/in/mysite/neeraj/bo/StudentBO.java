@@ -5,6 +5,7 @@ public class StudentBO {
 	Integer age;
 	String address;
 	Integer id;
+	String status;
 
 	public String getName() {
 		return name;
@@ -36,5 +37,13 @@ public class StudentBO {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

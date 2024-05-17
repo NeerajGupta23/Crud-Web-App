@@ -13,11 +13,67 @@ public class StudentServiceImpl implements IStudentService {
 
 		StudentBO studentBO = new StudentBO();
 		studentBO.setName(student.getName());
-		studentBO.setAge(student.getAge());
+
+		Integer age = student.getAge();
+		String status = null;
+		studentBO.setAge(age);
+
+		if (age >= 18) {
+			status = "Eligible";
+		} else {
+			status = "Not Eligible";
+		}
+		studentBO.setStatus(status);
 		studentBO.setAddress(student.getAddress());
-		
+
 		IStudentRepository studentRepoObject = RepositoryFactory.getStudentRepoObject();
 		return studentRepoObject.insertStudent(studentBO);
+	}
+
+	@Override
+	public boolean deleteStudent(StudentDTO student) {
+		StudentBO studentBO = new StudentBO();
+		studentBO.setId(student.getId());
+
+		IStudentRepository studentRepoObject = RepositoryFactory.getStudentRepoObject();
+		return studentRepoObject.deleteStudent(studentBO);
+	}
+
+	@Override
+	public StudentDTO readStudent(StudentDTO student) {
+		StudentBO studentBO = new StudentBO();
+		studentBO.setId(student.getId());
+
+		IStudentRepository studentRepoObject = RepositoryFactory.getStudentRepoObject();
+		studentBO = studentRepoObject.readStudent(studentBO);
+
+		student.setName(studentBO.getName());
+		student.setAge(studentBO.getAge());
+		student.setAddress(studentBO.getAddress());
+
+		return student;
+	}
+
+	@Override
+	public boolean updateStudent(StudentDTO student) {
+		StudentBO studentBO = new StudentBO();
+		studentBO.setId(student.getId());
+		studentBO.setName(student.getName());
+
+		Integer age = student.getAge();
+		String status = null;
+		studentBO.setAge(age);
+
+		if (age >= 18) {
+			status = "Eligible";
+		} else {
+			status = "Not Eligible";
+		}
+		studentBO.setStatus(status);
+		studentBO.setAddress(student.getAddress());
+
+		IStudentRepository studentRepoObject = RepositoryFactory.getStudentRepoObject();
+		return studentRepoObject.updateStudent(studentBO);
 	}
 
 }
