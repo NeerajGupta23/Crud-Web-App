@@ -3,11 +3,13 @@ package in.mysite.neeraj.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import in.mysite.neeraj.dto.StudentDTO;
 import in.mysite.neeraj.factory.ServiceFactory;
@@ -16,25 +18,19 @@ import in.mysite.neeraj.vo.StudentVO;
 
 @WebServlet(urlPatterns = { "*.perform" }, loadOnStartup = 1)
 public class RootServlet extends HttpServlet implements IStudentController {
+	
 	private static final long serialVersionUID = 1L;
 	private String deleteId = null;
+	
+	@Resource(name = "JNDI")
+	public static DataSource dataSource;
 
-	public RootServlet() {
-		super();
-	}
-
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
+	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		StringBuffer requestURL = request.getRequestURL();
 		String type = requestURL.substring(38);
 		StudentDTO studentDTO = null;
-		Boolean flag = true;
 
 		switch (type.replaceFirst(".perform", "")) {
 
