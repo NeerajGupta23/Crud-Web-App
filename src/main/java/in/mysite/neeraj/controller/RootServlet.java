@@ -1,16 +1,13 @@
 package in.mysite.neeraj.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 
 import in.mysite.neeraj.dto.StudentDTO;
 import in.mysite.neeraj.factory.ServiceFactory;
@@ -21,64 +18,102 @@ import in.mysite.neeraj.vo.StudentVO;
 public class RootServlet extends HttpServlet implements IStudentController {
 
 	private static final long serialVersionUID = 1L;
-
-	@Resource(name = "JNDI")
-	public static DataSource dataSource;
+	private static String msg = "";
+	private static String msgForId = "";
 
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		StringBuffer requestURL = request.getRequestURL();
 		String type = requestURL.substring(38);
-		StudentDTO studentDTO = null;
+
+		String sid = request.getParameter("id");
 		HttpSession currSession = request.getSession();
 		currSession.setAttribute("backURL", request.getHeader("referer"));
+
+		Boolean flag = false;
+		String printingMessage = null;
+		StudentDTO studentDTO = null;
 
 		switch (type.replaceFirst(".perform", "")) {
 
 		case "create":
-			insertStudent(request, response);
-			break;
-
-		case "delete":
-			deleteStudent(request, response);
-			break;
-
-		case "read":
-			studentDTO = readStudent(request, response);
-
-			if (studentDTO != null) {
-				currSession.setAttribute("student", studentDTO);
-
-				if (studentDTO.getName() == null && studentDTO.getAge() == null && studentDTO.getAddress() == null) {
-					response.sendRedirect("../idNotExist.jsp");
-				} else {
-					response.sendRedirect("../showStudentData.jsp");
-				}
-
+			flag = insertStudent(request, response);
+			if (flag) {
+				printingMessage = " is successfully Inserted...";
+				sid = findMaxId();
 			}
 			break;
 
-		case "update":
-			studentDTO = readStudent(request, response);
-
-			if (studentDTO != null) {
-				currSession.setAttribute("student", studentDTO);
-
-				if (studentDTO.getName() == null && studentDTO.getAge() == null && studentDTO.getAddress() == null) {
-					response.sendRedirect("../idNotExist.jsp");
-				} else {
-					response.sendRedirect("../showStudentDataInForm.jsp");
-				}
-
+		case "delete":
+			flag = deleteStudent(request, response);
+			if (flag) {
+				printingMessage = " is successfully Deleted...";
+			} else if (msgForId.equals("invalid")) {
+				msgForId = "consumed";
+				response.sendRedirect(request.getHeader("referer"));
 			}
 			break;
 
 		case "updateIt":
 			System.out.println("Coming...");
-			updateStudent(request, response);
+			flag = updateStudent(request, response);
+			if (flag) {
+				printingMessage = " is successfully Updated...";
+				sid = request.getParameter("sid");
+			}
+			break;
+
+		case "read":
+			studentDTO = readStudent(request, response);
+			if (studentDTO != null) {
+				currSession.setAttribute("student", studentDTO);
+				response.sendRedirect("../showStudentData.jsp");
+			} else if (msg.equals("No Data")) {
+				msg = "consumed";
+				studentDTO = new StudentDTO();
+				studentDTO.setId(Integer.parseInt(request.getParameter("id")));
+
+				currSession.setAttribute("student", studentDTO);
+				response.sendRedirect("../idNotExist.jsp");
+			} else if (msgForId.equals("invalid")) {
+				msgForId = "consumed";
+				response.sendRedirect(request.getHeader("referer"));
+			}
+			break;
+
+		case "update":
+			studentDTO = readStudent(request, response);
+			if (studentDTO != null) {
+				currSession.setAttribute("student", studentDTO);
+				response.sendRedirect("../showStudentDataInForm.jsp");
+			} else if (msg.equals("No Data")) {
+				msg = "consumed";
+				studentDTO = new StudentDTO();
+				studentDTO.setId(Integer.parseInt(request.getParameter("id")));
+
+				currSession.setAttribute("student", studentDTO);
+				response.sendRedirect("../idNotExist.jsp");
+			} else if (msgForId.equals("invalid")) {
+				msgForId = "consumed";
+				response.sendRedirect(request.getHeader("referer"));
+			}
 			break;
 		}
 
+		if (flag) {
+			flag = false;
+			printingMessage = "Row with id " + sid + printingMessage;
+
+			request.getSession().setAttribute("message", printingMessage);
+			response.sendRedirect("../successfull.jsp");
+		}
+
+	}
+
+	private String findMaxId() {
+		IStudentService serviceObject = ServiceFactory.getStudentServiceObject();
+		return serviceObject.getMaxId();
 	}
 
 	private Boolean updateStudent(HttpServletRequest request, HttpServletResponse response) {
@@ -97,12 +132,6 @@ public class RootServlet extends HttpServlet implements IStudentController {
 			flag = studentServiceObject.updateStudent(studentDTO);
 		}
 
-		try {
-			response.sendRedirect(request.getParameter("urlLoc"));
-		} catch (IOException e) {
-			System.out.println("Problem At Insert module");
-			e.printStackTrace();
-		}
 		return flag;
 	}
 
@@ -110,7 +139,7 @@ public class RootServlet extends HttpServlet implements IStudentController {
 		String id = request.getParameter("id");
 
 		if (id.equals("")) {
-			response.sendRedirect(request.getHeader("referer"));
+			msgForId = "invalid";
 			return null;
 		}
 
@@ -120,12 +149,15 @@ public class RootServlet extends HttpServlet implements IStudentController {
 			studentDTO.setId(Integer.parseInt(id));
 		} catch (NumberFormatException e) {
 			System.out.println("Invalid Number Id.....");
-			studentDTO = null;
+
+			response.sendRedirect(request.getHeader("referer"));
+			return null;
 		}
 
 		if (studentDTO != null) {
 			IStudentService studentServiceObject = ServiceFactory.getStudentServiceObject();
 			studentDTO = studentServiceObject.readStudent(studentDTO);
+			msg = "No Data";
 		}
 
 		return studentDTO;
@@ -134,12 +166,8 @@ public class RootServlet extends HttpServlet implements IStudentController {
 	public boolean deleteStudent(HttpServletRequest request, HttpServletResponse response) {
 		String id = request.getParameter("id");
 		if (id.equals("")) {
-			try {
-				response.sendRedirect(request.getHeader("referer"));
-			} catch (IOException e) {
-				System.out.println("There is no value given for id...");
-				e.printStackTrace();
-			}
+			msgForId = "invalid";
+			return false;
 		}
 
 		StudentDTO studentDTO = new StudentDTO();
@@ -165,13 +193,6 @@ public class RootServlet extends HttpServlet implements IStudentController {
 				System.out.println("Deletion Page not exist Problem");
 				e.printStackTrace();
 			}
-		} else {
-			try {
-				response.sendRedirect(request.getHeader("referer"));
-			} catch (IOException e) {
-				System.out.println("Problem At Delete module");
-				e.printStackTrace();
-			}
 		}
 
 		return flag;
@@ -189,13 +210,12 @@ public class RootServlet extends HttpServlet implements IStudentController {
 		if (studentDTO != null) {
 			IStudentService studentServiceObject = ServiceFactory.getStudentServiceObject();
 			flag = studentServiceObject.insertStudent(studentDTO);
-		}
-
-		try {
-			response.sendRedirect(request.getHeader("referer"));
-		} catch (IOException e) {
-			System.out.println("Problem At Insert module");
-			e.printStackTrace();
+		} else {
+			try {
+				response.sendRedirect(request.getHeader("referer"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return flag;
 	}

@@ -1,51 +1,21 @@
 package in.mysite.neeraj.util;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
-import in.mysite.neeraj.controller.RootServlet;
+import in.mysite.neeraj.bo.StudentBO;
 
 public class Utility {
+	private static SessionFactory factory = null;
 
-	public static Connection getConnection() {
-		Connection connection = null;
-
-		try {
-			connection = RootServlet.dataSource.getConnection();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return connection;
+	static {
+		factory = new Configuration().configure("/in/mysite/neeraj/xml/hibernate.cfg.xml")
+				.addAnnotatedClass(StudentBO.class).buildSessionFactory();
 	}
 
-	public static void closeResources(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
-		if (connection != null) {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (preparedStatement != null) {
-			try {
-				preparedStatement.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (resultSet != null) {
-			try {
-				resultSet.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
+	public static Session getSession() {
+		return factory.openSession();
 	}
+
 }

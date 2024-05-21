@@ -2,10 +2,10 @@ package in.mysite.neeraj.vo;
 
 // VO -> only contains String type property 
 public class StudentVO {
-	String name;
-	String age;
-	String address;
-	String id;
+	private String name;
+	private String age;
+	private String address;
+	private String id;
 
 	public String getName() {
 		return name;

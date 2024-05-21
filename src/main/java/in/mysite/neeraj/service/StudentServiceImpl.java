@@ -47,10 +47,13 @@ public class StudentServiceImpl implements IStudentService {
 		IStudentRepository studentRepoObject = RepositoryFactory.getStudentRepoObject();
 		studentBO = studentRepoObject.readStudent(studentBO);
 
+		if(studentBO == null) {
+			return null;
+		}
+		
 		student.setName(studentBO.getName());
 		student.setAge(studentBO.getAge());
 		student.setAddress(studentBO.getAddress());
-
 		return student;
 	}
 
@@ -74,6 +77,12 @@ public class StudentServiceImpl implements IStudentService {
 
 		IStudentRepository studentRepoObject = RepositoryFactory.getStudentRepoObject();
 		return studentRepoObject.updateStudent(studentBO);
+	}
+
+	@Override
+	public String getMaxId() {
+		IStudentRepository repoFactory = RepositoryFactory.getStudentRepoObject();
+		return repoFactory.getMaxId();
 	}
 
 }

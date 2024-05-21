@@ -10,4 +10,6 @@ public interface IStudentService {
 	boolean updateStudent(StudentDTO student);
 
 	StudentDTO readStudent(StudentDTO student);
+
+	String getMaxId();
 }

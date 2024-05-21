@@ -10,4 +10,6 @@ public interface IStudentRepository {
 	boolean updateStudent(StudentBO student);
 
 	StudentBO readStudent(StudentBO student);
+	
+	String getMaxId();
 }

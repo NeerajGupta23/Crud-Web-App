@@ -1,10 +1,10 @@
 package in.mysite.neeraj.dto;
 
 public class StudentDTO {
-	String name;
-	Integer age;
-	String address;
-	Integer id;
+	private String name;
+	private Integer age;
+	private String address;
+	private Integer id;
 
 	public String getName() {
 		return name;
